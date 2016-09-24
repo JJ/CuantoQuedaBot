@@ -2,23 +2,38 @@ package main
 
 // taken from https://github.com/tucnak/telebot
 import (
-    "log"
+
     "time"
     "os"
+
+    "github.com/op/go-logging"
     "github.com/tucnak/telebot"
 )
 
 var bot *telebot.Bot
 
+var log = logging.MustGetLogger("example")
+
+// Example format string. Everything except the message has a custom color
+// which is dependent on the log level. Many fields have a custom output
+// formatting too, eg. the time returns the hour down to the milli second.
+var format = logging.MustStringFormatter(
+    `%{color}%{time:15:04:05.000} %{shortfunc} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}`,
+)
+
 func main() {
     var err error
     bot, err = telebot.NewBot(os.Getenv("BOT_TOKEN"))
     if err != nil {
-        log.Fatalln(err)
+        log.Critical(err)
     }
 
     bot.Messages = make(chan telebot.Message, 1000)
     bot.Queries = make(chan telebot.Query, 1000)
+
+    backend := logging.NewLogBackend(os.Stderr, "", 0)
+    backend1Leveled := logging.AddModuleLevel(backend)
+    backend1Leveled.SetLevel(logging.INFO, "")
 
     go messages()
     go queries()
@@ -28,15 +43,15 @@ func main() {
 
 func messages() {
     for message := range bot.Messages {
-        log.Printf("Received a message from %s with the text: %s\n", message.Sender.Username, message.Text)
+        log.Info("Received a message from %s with the text: %s\n", message.Sender.Username, message.Text)
     }
 }
 
 func queries() {
     for query := range bot.Queries {
-        log.Println("--- new query ---")
-        log.Println("from:", query.From.Username)
-        log.Println("text:", query.Text)
+        log.Info("--- new query ---")
+        log.Info("from:", query.From.Username)
+        log.Info("text:", query.Text)
 
         // Create an article (a link) object to show in our results.
         article := &telebot.InlineQueryResultArticle{
@@ -59,7 +74,7 @@ func queries() {
 
         // And finally send the response.
         if err := bot.AnswerInlineQuery(&query, &response); err != nil {
-            log.Println("Failed to respond to query:", err)
+            log.Info("Failed to respond to query:", err)
         }
     }
 }
