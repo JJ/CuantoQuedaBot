@@ -4,7 +4,7 @@ package main
 import (
     "log"
     "time"
-
+    "os"
     "github.com/tucnak/telebot"
 )
 
@@ -12,7 +12,7 @@ var bot *telebot.Bot
 
 func main() {
     var err error
-    bot, err = telebot.NewBot("SECRET TOKEN")
+    bot, err = telebot.NewBot(os.Getenv("BOT_TOKEN"))
     if err != nil {
         log.Fatalln(err)
     }
