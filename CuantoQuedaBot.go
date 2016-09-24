@@ -5,6 +5,7 @@ import (
 
     "time"
     "os"
+    "fmt"
 
     "encoding/json"
     "io/ioutil"
@@ -21,8 +22,10 @@ type Hito struct {
 
 type Data struct {
 	Comment string `json:"comment"`
-	hitos Hito
+	Hitos []Hito `json:"hitos"`
 }
+
+var hitos []Hito
 
 func init() {
 	// Log as JSON instead of the default ASCII formatter.
@@ -36,12 +39,17 @@ func init() {
 		}).Fatal("File error", e)
 		os.Exit(1)
 	}
-	var hitos Data
-	if err := json.Unmarshal(file,&hitos); err != nil {
+	var hitos_data Data
+	if err := json.Unmarshal(file,&hitos_data); err != nil {
 		log.WithFields(log.Fields{
 			"error": err,
 		}).Fatal("JSON error")
 	}
+
+	for _,hito := range hitos_data.Hitos {
+	 	fmt.Printf("Titulo es %s y file es %s",hito.Title,hito.File )
+	}
+
 }
 
 func main() {
