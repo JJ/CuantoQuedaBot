@@ -5,7 +5,8 @@ import (
 
     "time"
     "os"
-    "fmt"
+
+    "strings"
 
     "encoding/json"
     "io/ioutil"
@@ -26,6 +27,7 @@ type Data struct {
 }
 
 var hitos []Hito
+var results []telebot.InlineQueryResult
 
 func init() {
 	// Log as JSON instead of the default ASCII formatter.
@@ -46,10 +48,21 @@ func init() {
 		}).Fatal("JSON error")
 	}
 
-	for _,hito := range hitos_data.Hitos {
-	 	fmt.Printf("Titulo es %s y file es %s",hito.Title,hito.File )
-	}
+	for i,hito := range hitos_data.Hitos {
+		this_url := strings.Join( []string{"https://jj.github.io/IV/documentos/proyecto/",hito.File}, "/")
+		article := &telebot.InlineQueryResultArticle{
+			Title: hito.Title,
+			URL:   this_url,
+			InputMessageContent: &telebot.InputTextMessageContent{
+				Text:            strings.Join( []string{"Hito ", i, ": ", hito.Title, " => ", this_url })
+				DisablePreview: false,
+			},
+		}
+		results = append( results, article )
 
+	}
+//	fmt.Printf(" Results %v", results );
+	
 }
 
 func main() {
@@ -79,23 +92,24 @@ func messages() {
 
 func queries() {
     for query := range bot.Queries {
+
         log.WithFields(log.Fields {
 		"type": "query",
 		"from": query.From.Username,
 		"text": query.Text }).Info("New query")
 
-        // Create an article (a link) object to show in our results.
-        article := &telebot.InlineQueryResultArticle{
-            Title: "Telegram bot framework written in Go",
-            URL:   "https://github.com/tucnak/telebot",
-            InputMessageContent: &telebot.InputTextMessageContent{
-                Text:           "Telebot is a convenient wrapper to Telegram Bots API, written in Golang.",
-                DisablePreview: false,
-            },
-        }
+        // // Create an article (a link) object to show in our results.
+        // article := &telebot.InlineQueryResultArticle{
+        //     Title: "Telegram bot framework written in Go",
+        //     URL:   "https://github.com/tucnak/telebot",
+        //     InputMessageContent: &telebot.InputTextMessageContent{
+        //         Text:           "Telebot is a convenient wrapper to Telegram Bots API, written in Golang.",
+        //         DisablePreview: false,
+        //     },
+        // }
 
-        // Build the list of results. In this instance, just our 1 article from above.
-        results := []telebot.InlineQueryResult{article}
+        // // Build the list of results. In this instance, just our 1 article from above.
+        // results := []telebot.InlineQueryResult{article}
 
         // Build a response object to answer the query.
         response := telebot.QueryResponse{
