@@ -64,37 +64,3 @@ func queries() {
     }
 }
 
-Files
-
-Telebot lets you upload files from the file system:
-
-boom, err := telebot.NewFile("boom.ogg")
-if err != nil {
-    return err
-}
-
-audio := telebot.Audio{File: boom}
-
-// Next time you send &audio, telebot won't issue
-// an upload, but would re-use existing file.
-err = bot.SendAudio(recipient, &audio, nil)
-
-Reply markup
-
-Sometimes you wanna send a little complicated messages with some optional parameters. The third argument of all Send* methods accepts telebot.SendOptions, capable of defining an advanced reply markup:
-
-// Send a selective force reply message.
-bot.SendMessage(user, "pong", &telebot.SendOptions{
-        ReplyMarkup: telebot.ReplyMarkup{
-            ForceReply: true,
-            Selective: true,
-
-            CustomKeyboard: [][]string{
-                []string{"1", "2", "3"},
-                []string{"4", "5", "6"},
-                []string{"7", "8", "9"},
-                []string{"*", "0", "#"},
-            },
-        },
-    },
-)
