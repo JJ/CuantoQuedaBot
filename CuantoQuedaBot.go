@@ -6,15 +6,38 @@ import (
     "time"
     "os"
 
+    "encoding/json"
+    "io/ioutil"
+
     log "github.com/Sirupsen/logrus"
     "github.com/tucnak/telebot"
 )
 
 var bot *telebot.Bot
+type Hito struct {
+	File string `json:"file"`
+	Title string `json:"title"`
+}
+
+type Data struct {
+	Comment string `json:"comment"`
+	hitos Hito
+}
 
 func init() {
 	// Log as JSON instead of the default ASCII formatter.
 	log.SetFormatter(&log.JSONFormatter{})
+
+	// Load milestones array
+	file, e := ioutil.ReadFile("./hitos.json")
+	if e != nil {
+		log.Error("File error: %v\n", e)
+		os.Exit(1)
+	}
+	var hitos Data
+	if err := json.Unmarshal(file,&hitos); err != nil {
+		log.Error(err)
+	}
 }
 
 func main() {

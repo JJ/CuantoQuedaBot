@@ -1,0 +1,11 @@
+{
+    "comment": "Hitos del proyecto de IV http://jj.github.io/IV",
+    "hitos" : [
+	{ "file": "0.Repositorio.md",
+	  "title": "Git y GitHub" },
+	{ "file": "1.Infraestructura.md",
+	  "title": "Infraestructura del proyecto"},
+	{ "file": "2.CI.md",
+	  "title" "Test e integración continua" }
+    ]
+}
