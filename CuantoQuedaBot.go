@@ -7,6 +7,7 @@ import (
     "os"
 
     "strings"
+    "strconv" 
 
     "encoding/json"
     "io/ioutil"
@@ -54,7 +55,7 @@ func init() {
 			Title: hito.Title,
 			URL:   this_url,
 			InputMessageContent: &telebot.InputTextMessageContent{
-				Text:            strings.Join( []string{"Hito ", i, ": ", hito.Title, " => ", this_url })
+				Text:            strings.Join( []string{"Hito ", strconv.Itoa(i), ":", hito.Title, " =>", this_url }, " "),
 				DisablePreview: false,
 			},
 		}
