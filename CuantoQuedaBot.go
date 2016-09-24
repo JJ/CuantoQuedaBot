@@ -6,34 +6,26 @@ import (
     "time"
     "os"
 
-    "github.com/op/go-logging"
+    log "github.com/Sirupsen/logrus"
     "github.com/tucnak/telebot"
 )
 
 var bot *telebot.Bot
 
-var log = logging.MustGetLogger("example")
-
-// Example format string. Everything except the message has a custom color
-// which is dependent on the log level. Many fields have a custom output
-// formatting too, eg. the time returns the hour down to the milli second.
-var format = logging.MustStringFormatter(
-    `%{color}%{time:15:04:05.000} %{shortfunc} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}`,
-)
+func init() {
+	// Log as JSON instead of the default ASCII formatter.
+	log.SetFormatter(&log.JSONFormatter{})
+}
 
 func main() {
     var err error
     bot, err = telebot.NewBot(os.Getenv("BOT_TOKEN"))
     if err != nil {
-        log.Critical(err)
+        log.Error(err)
     }
 
     bot.Messages = make(chan telebot.Message, 1000)
     bot.Queries = make(chan telebot.Query, 1000)
-
-    backend := logging.NewLogBackend(os.Stderr, "", 0)
-    backend1Leveled := logging.AddModuleLevel(backend)
-    backend1Leveled.SetLevel(logging.INFO, "")
 
     go messages()
     go queries()
@@ -43,15 +35,19 @@ func main() {
 
 func messages() {
     for message := range bot.Messages {
-        log.Info("Received a message from %s with the text: %s\n", message.Sender.Username, message.Text)
+	    log.WithFields(log.Fields {
+		    "type": "message",
+		    "username": message.Sender.Username,
+		    "text": message.Text }).Info("Message received")
     }
 }
 
 func queries() {
     for query := range bot.Queries {
-        log.Info("--- new query ---")
-        log.Info("from:", query.From.Username)
-        log.Info("text:", query.Text)
+        log.WithFields(log.Fields {
+		"type": "query",
+		"from": query.From.Username,
+		"text": query.Text }).Info("New query")
 
         // Create an article (a link) object to show in our results.
         article := &telebot.InlineQueryResultArticle{
@@ -74,7 +70,11 @@ func queries() {
 
         // And finally send the response.
         if err := bot.AnswerInlineQuery(&query, &response); err != nil {
-            log.Info("Failed to respond to query:", err)
+            log.WithFields(log.Fields {
+		    "type": "error",
+		    "query": query,
+		    "error": err,
+	    }).Error("Failed to respond to query:")
         }
     }
 }
