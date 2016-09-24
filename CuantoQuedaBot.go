@@ -31,12 +31,16 @@ func init() {
 	// Load milestones array
 	file, e := ioutil.ReadFile("./hitos.json")
 	if e != nil {
-		log.Error("File error: %v\n", e)
+		log.WithFields(log.Fields{
+			"error": e,
+		}).Fatal("File error", e)
 		os.Exit(1)
 	}
 	var hitos Data
 	if err := json.Unmarshal(file,&hitos); err != nil {
-		log.Error(err)
+		log.WithFields(log.Fields{
+			"error": err,
+		}).Fatal("JSON error")
 	}
 }
 

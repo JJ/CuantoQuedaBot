@@ -6,6 +6,6 @@
 	{ "file": "1.Infraestructura.md",
 	  "title": "Infraestructura del proyecto"},
 	{ "file": "2.CI.md",
-	  "title" "Test e integración continua" }
+	  "title": "Test e integración continua" }
     ]
 }
