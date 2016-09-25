@@ -20,6 +20,7 @@ var bot *telebot.Bot
 type Hito struct {
 	File string `json:"file"`
 	Title string `json:"title"`
+	Date string `json:"fecha"`
 }
 
 type Data struct {
@@ -29,6 +30,7 @@ type Data struct {
 
 var hitos []Hito
 var results []telebot.InlineQueryResult
+var ahora = time.Now()
 
 func init() {
 	// Log as JSON instead of the default ASCII formatter.
@@ -68,6 +70,9 @@ func init() {
 
 func main() {
     var err error
+    if os.Getenv("BOT_TOKEN") == "" {
+	    log.Fatal("No se ha definido el token del bot")
+    }
     bot, err = telebot.NewBot(os.Getenv("BOT_TOKEN"))
     if err != nil {
         log.Error(err)
@@ -98,19 +103,6 @@ func queries() {
 		"type": "query",
 		"from": query.From.Username,
 		"text": query.Text }).Info("New query")
-
-        // // Create an article (a link) object to show in our results.
-        // article := &telebot.InlineQueryResultArticle{
-        //     Title: "Telegram bot framework written in Go",
-        //     URL:   "https://github.com/tucnak/telebot",
-        //     InputMessageContent: &telebot.InputTextMessageContent{
-        //         Text:           "Telebot is a convenient wrapper to Telegram Bots API, written in Golang.",
-        //         DisablePreview: false,
-        //     },
-        // }
-
-        // // Build the list of results. In this instance, just our 1 article from above.
-        // results := []telebot.InlineQueryResult{article}
 
         // Build a response object to answer the query.
         response := telebot.QueryResponse{

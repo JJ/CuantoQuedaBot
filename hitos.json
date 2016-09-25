@@ -1,11 +1,14 @@
 {
     "comment": "Hitos del proyecto de IV http://jj.github.io/IV",
     "hitos" : [
-	{ "file": "0.Repositorio.md",
-	  "title": "Git y GitHub" },
-	{ "file": "1.Infraestructura.md",
-	  "title": "Infraestructura del proyecto"},
-	{ "file": "2.CI.md",
-	  "title": "Test e integración continua" }
+	{ "file": "0.Repositorio",
+	  "title": "Git y GitHub",
+	  "fecha": "29/09/2016"},
+	{ "file": "1.Infraestructura",
+	  "title": "Infraestructura del proyecto",
+          "fecha": "06/10/2016"},
+	{ "file": "2.CI",
+	  "title": "Test e integración continua",
+          "fecha": "24/10/2016"}
     ]
 }
