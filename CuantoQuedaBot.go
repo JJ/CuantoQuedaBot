@@ -13,7 +13,7 @@ import (
     "io/ioutil"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/tucnak/telebot"
+    "github.com/JJ/telebot"
 )
 
 var bot *telebot.Bot
