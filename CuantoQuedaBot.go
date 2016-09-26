@@ -88,7 +88,7 @@ func main() {
 
     // routes are compiled as regexps
     bot.Handle("/ayuda", func (context telebot.Context) {
-	    bot.SendMessage(context.Message.Chat, "Órdenes:\n\t/hito <número> ⇒ Describe hito", nil)
+	    bot.SendMessage(context.Message.Chat, "Órdenes:\n\t/hito <número> ⇒ Describe hito\n\t/cuanto_queda <número> ⇒ Horas hasta entrega", nil)
     })
 
     // named groups found in routes will get injected in the controller as arguments
@@ -97,6 +97,13 @@ func main() {
 	    hito, _ := results[hito_n].(*telebot.InlineQueryResultArticle)
 	    text, _ := hito.InputMessageContent.(*telebot.InputTextMessageContent)
 	    bot.SendMessage(context.Message.Chat, fmt.Sprintf("Hito %d\n\t %s", hito_n, text.Text ), nil)
+    })
+
+    // named groups found in routes will get injected in the controller as arguments
+    bot.Handle("/cuanto_queda (?P<n>[0-9]+)", func(context telebot.Context) {
+	    hito_n, _ := strconv.Atoi(context.Args["n"])
+	    queda := fechas[hito_n].Sub(time.Now())
+	    bot.SendMessage(context.Message.Chat, fmt.Sprintf("Hito %d\n\t Quedan %f horas", hito_n, queda.Hours() ), nil)
     })
 
     bot.Messages = make(chan telebot.Message, 1000)
