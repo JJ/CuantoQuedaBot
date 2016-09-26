@@ -5,7 +5,7 @@ import (
 
     "time"
     "os"
-
+    "fmt" 
     "strings"
     "strconv" 
 
@@ -87,8 +87,16 @@ func main() {
     }
 
     // routes are compiled as regexps
-    bot.Handle("/hi", func (context telebot.Context) {
-	    bot.SendMessage(context.Message.Chat, "Hola para ti también", nil)
+    bot.Handle("/ayuda", func (context telebot.Context) {
+	    bot.SendMessage(context.Message.Chat, "Órdenes:\n\t/hito <número> ⇒ Describe hito", nil)
+    })
+
+    // named groups found in routes will get injected in the controller as arguments
+    bot.Handle("/hito (?P<n>[0-9]+)", func(context telebot.Context) {
+	    hito_n, _ := strconv.Atoi(context.Args["n"])
+	    hito, _ := results[hito_n].(*telebot.InlineQueryResultArticle)
+	    text, _ := hito.InputMessageContent.(*telebot.InputTextMessageContent)
+	    bot.SendMessage(context.Message.Chat, fmt.Sprintf("Hito %d\n\t %s", hito_n, text.Text ), nil)
     })
 
     bot.Messages = make(chan telebot.Message, 1000)
