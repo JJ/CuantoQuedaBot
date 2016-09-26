@@ -1,8 +1,9 @@
 set :application, "CuantoQuedaBot"
 set :repo_url, "https://github.com/JJ/CuantoQuedaBot.git"
 
-set :user, 'nitrous'
-set :deploy_to, "/home/#{:user}/app"
+user = "nitrous"
+set :user, user
+set :deploy_to, "/home/#{user}/app"
 set :gopath, deploy_to
 set :pid_file, deploy_to+'/pids/PIDFILE'
 set :symlinks, { "pids" => "pids" }
@@ -22,7 +23,7 @@ namespace :go do
     on roles(:app) do 
       execute "go get -u github.com/JJ/CuantoQuedaBot"
       execute "mkdir #{release_path}/bin"
-      execute "cp /home/#{:user}/go/bin/CuantoQuedaBot #{release_path}/bin/"
+      execute "cp /home/#{user}/go/bin/CuantoQuedaBot #{release_path}/bin/"
     end
   end
 end
