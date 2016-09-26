@@ -86,6 +86,11 @@ func main() {
         log.Error(err)
     }
 
+    // routes are compiled as regexps
+    bot.Handle("/hi", func (context telebot.Context) {
+	    bot.SendMessage(context.Message.Chat, "Hola para ti también", nil)
+    })
+
     bot.Messages = make(chan telebot.Message, 1000)
     bot.Queries = make(chan telebot.Query, 1000)
 
@@ -97,6 +102,9 @@ func main() {
 
 func messages() {
     for message := range bot.Messages {
+	    if handler, args := bot.Route(&message); handler != nil {
+		    handler(telebot.Context{Message: &message, Args: args})
+	    }
 	    log.WithFields(log.Fields {
 		    "type": "message",
 		    "username": message.Sender.Username,
