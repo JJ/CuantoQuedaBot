@@ -1,7 +1,6 @@
 set :application, "CuantoQuedaBot"
 set :repo_url, "https://github.com/JJ/CuantoQuedaBot.git"
 token = ENV['BOT_TOKEN']
-puts "token is #{token}"
 user = "nitrous"
 
 set :user, user
@@ -22,9 +21,20 @@ namespace :go do
   task :build do
     on roles(:app) do
       execute "export GOROOT=/usr/local/opt/go;export GOPATH=/home/nitrous/lib/Go;export GOBIN=$GOPATH/bin;cd #{release_path};/usr/local/opt/go/bin/go get"
-      execute "export GOROOT=/usr/local/opt/go;export GOPATH=/home/nitrous/lib/Go;export GOBIN=$GOPATH/bin;cd #{release_path};export BOT_TOKEN=#{token};/usr/local/opt/go/bin/go run CuantoQuedaBot.go"
 
     end
   end
+  task :start do
+    on roles(:app) do
+      execute "export GOROOT=/usr/local/opt/go;export GOPATH=/home/nitrous/lib/Go;export GOBIN=$GOPATH/bin;cd #{release_path};export BOT_TOKEN=#{token};nohup /usr/local/opt/go/bin/go run CuantoQuedaBot.go > /home/nitrous/msgs.log 2>&1 &"
+    end
+  end
+
+  task :stop do
+    on roles(:app) do
+      execute "pkill CuantoQuedaBot"
+    end
+  end
 end
+
 
