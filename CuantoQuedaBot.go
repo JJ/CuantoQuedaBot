@@ -45,7 +45,7 @@ func init() {
 	// Declare logrus plugin
 	if os.Getenv("LOGZ_TOKEN") != "" {
 
-		hook, err := logrus_logstash.NewHookWithFields("tcp", os.Getenv("LOGZ_HOST"), "CuantoQuedaBot", logrus.Fields{
+		hook, err := logrus_logstash.NewHookWithFields("https", os.Getenv("LOGZ_HOST"), "CuantoQuedaBot", logrus.Fields{
 			"hostname":    name,
 			"serviceName": "CuantoQuedaBot",
 			"token": os.Getenv("LOGZ_TOKEN"),
