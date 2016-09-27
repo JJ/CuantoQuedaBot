@@ -12,7 +12,9 @@ import (
     "encoding/json"
     "io/ioutil"
 
-    log "github.com/Sirupsen/logrus"
+    "github.com/Sirupsen/logrus"   
+    "github.com/bshuster-repo/logrus-logstash-hook"
+
     "github.com/JJ/telebot"
 )
 
@@ -34,20 +36,35 @@ var ahora = time.Now()
 var fechas []time.Time
  
 func init() {
-	// Log as JSON instead of the default ASCII formatter.
-	log.SetFormatter(&log.JSONFormatter{})
 
+
+	// Log as JSON instead of the default ASCII formatter.
+	
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+	name, _ := os.Hostname()
+	// Declare logrus plugin
+	if os.Getenv("LOGZ_TOKEN") != "" {
+
+		hook, _ := logrus_logstash.NewHookWithFields("https", os.Getenv("LOGZ_HOST"), "CuantoQuedaBot", logrus.Fields{
+			"hostname":    name,
+			"serviceName": "CuantoQuedaBot",
+			"token": os.Getenv("LOGZ_TOKEN"),
+		})
+		logrus.AddHook(hook)
+
+	}
+	
 	// Load milestones array
 	file, e := ioutil.ReadFile("./hitos.json")
 	if e != nil {
-		log.WithFields(log.Fields{
+		logrus.WithFields(logrus.Fields{
 			"error": e,
 		}).Fatal("File error", e)
 		os.Exit(1)
 	}
 	var hitos_data Data
 	if err := json.Unmarshal(file,&hitos_data); err != nil {
-		log.WithFields(log.Fields{
+		logrus.WithFields(logrus.Fields{
 			"error": err,
 		}).Fatal("JSON error")
 	}
@@ -79,11 +96,11 @@ func init() {
 func main() {
     var err error
     if os.Getenv("BOT_TOKEN") == "" {
-	    log.Fatal("No se ha definido el token del bot")
+	    logrus.Fatal("No se ha definido el token del bot")
     }
     bot, err = telebot.NewBot(os.Getenv("BOT_TOKEN"))
     if err != nil {
-        log.Error(err)
+        logrus.Error(err)
     }
 
     // routes are compiled as regexps
@@ -120,7 +137,7 @@ func messages() {
 	    if handler, args := bot.Route(&message); handler != nil {
 		    handler(telebot.Context{Message: &message, Args: args})
 	    }
-	    log.WithFields(log.Fields {
+	    logrus.WithFields(logrus.Fields {
 		    "type": "message",
 		    "username": message.Sender.Username,
 		    "text": message.Text }).Info("Message received")
@@ -130,7 +147,7 @@ func messages() {
 func queries() {
     for query := range bot.Queries {
 
-        log.WithFields(log.Fields {
+        logrus.WithFields(logrus.Fields {
 		"type": "query",
 		"from": query.From.Username,
 		"text": query.Text }).Info("New query")
@@ -143,7 +160,7 @@ func queries() {
 
         // And finally send the response.
         if err := bot.AnswerInlineQuery(&query, &response); err != nil {
-            log.WithFields(log.Fields {
+            logrus.WithFields(logrus.Fields {
 		    "type": "error",
 		    "query": query,
 		    "error": err,
