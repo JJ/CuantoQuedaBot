@@ -14,6 +14,7 @@ import (
 
     "github.com/Sirupsen/logrus"   
     "github.com/bshuster-repo/logrus-logstash-hook"
+    "gopkg.in/polds/logrus-papertrail-hook.v2"
 
     "github.com/JJ/telebot"
 )
@@ -57,6 +58,23 @@ func init() {
 		}
 		log.Hooks.Add(hook)
 
+	}
+
+	if os.Getenv("PAPERTRAIL_HOST") != "" {
+
+		udp_port, _ := strconv.Atoi(os.Getenv("PAPERTRAIL_PORT"))
+		hook, err := logrus_papertrail.NewPapertrailHook(&logrus_papertrail.Hook{
+			Host: os.Getenv("PAPERTRAIL_HOST"),
+			Port: udp_port,
+			Hostname: name,
+			Appname: "CuantoQuedaBot",
+		})		
+		if  err != nil {
+			log.WithFields(logrus.Fields{
+				"error": err,
+			}).Fatal("Hook error")
+		}
+		log.Hooks.Add(hook)
 	}
 	
 	// Load milestones array
