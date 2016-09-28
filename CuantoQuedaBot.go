@@ -95,11 +95,11 @@ func init() {
 	for i,hito := range hitos_data.Hitos {
 		this_url := strings.Join( []string{"https://jj.github.io/IV/documentos/proyecto/",hito.File}, "/")
 		d := strings.Split(hito.Date,"/")
-		this_year, _ := strconv.Atoi(d[0])
+		this_day, _ := strconv.Atoi(d[0])
 		this_month, _ := strconv.Atoi(d[1])
-		this_day, _ := strconv.Atoi(d[2])
+		this_year, _ := strconv.Atoi(d[2])
 		fechas = append( fechas, 
-			time.Date(this_day, time.Month(this_month), this_year,
+			time.Date(this_year, time.Month(this_month), this_day,
 				12,30,0,0, time.Local))
 		article := &telebot.InlineQueryResultArticle{
 			Title: hito.Title,
