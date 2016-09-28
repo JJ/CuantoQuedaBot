@@ -100,7 +100,7 @@ func init() {
 		this_day, _ := strconv.Atoi(d[2])
 		fechas = append( fechas, 
 			time.Date(this_day, time.Month(this_month), this_year,
-				12,30,0,0, time.UTC))
+				12,30,0,0, time.Local))
 		article := &telebot.InlineQueryResultArticle{
 			Title: hito.Title,
 			URL:   this_url,
