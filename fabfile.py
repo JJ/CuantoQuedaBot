@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from fabric.api import env, run
 from fabric.context_managers import shell_env, cd
+import os
 
 env.hosts = [ '159.100.248.62' ]
 env.user = "root"
@@ -11,13 +12,24 @@ def uptime():
   
   
 def build(goroot="/usr/lib/go", gobin="/usr/bin", gopath="/home/%s/lib/go" % env.user):
-    variables = { 'goroot': goroot, 'gobin':gobin,'gopath': gopath, 'release_path':env.release_path} 
     with cd(env.release_path):
         with shell_env(GOROOT=goroot,GOPATH=gopath,GOBIN=gobin):
             run("git pull" )
             run("$GOBIN/go get")
 
-def start(goroot="/usr/lib/go", gobin="/usr/bin", gopath="/home/%s/lib/go" % env.user):
-    variables = { 'goroot': goroot, 'gobin':gobin,'gopath': gopath, 'release_path':env.release_path} 
-    run("export GOROOT=%(goroot)s;export GOPATH=%(gopath)s;export GOBIN=%(gobin)s;cd %(release_path)s; $GOBIN/go run CuantoQuedaBot" %  variables )
+def start(goroot="/usr/lib/go", gobin="/usr/bin",
+          gopath="/home/%s/lib/go" % env.user,
+          bot_token=os.environ('BOT_TOKEN'),
+          papertrail_host=os.environ('PAPERTRAIL_HOST'),
+          papertrail_port=os.environ('PAPERTRAIL_PORT')):
+    
+    with cd(env.release_path):
+        with shell_env(GOROOT=goroot,GOPATH=gopath,
+                       GOBIN=gobin,BOT_TOKEN=bot_token,
+                       PAPERTRAIL_HOST=papertrail_host,
+                       PAPERTRAIL_PORT=papertrail_port):
+            run(" $GOBIN/go run CuantoQuedaBot" %  variables )
+            
+def stop():
+    run("pkill CuantoQuedaBot")
     
