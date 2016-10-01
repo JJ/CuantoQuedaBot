@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from fabric.api import env, run
+from fabric.context_managers import shell_env, cd
 
 env.hosts = [ '159.100.248.62' ]
 env.user = "root"
@@ -11,5 +12,12 @@ def uptime():
   
 def build(goroot="/usr/lib/go", gobin="/usr/bin", gopath="/home/%s/lib/go" % env.user):
     variables = { 'goroot': goroot, 'gobin':gobin,'gopath': gopath, 'release_path':env.release_path} 
-    run("cd %(release_path)s;git pull" % variables )
-    run("export GOROOT=%(goroot)s;export GOPATH=%(gopath)s;export GOBIN=%(gobin)s;cd %(release_path)s; $GOBIN/go get" %  variables )
+    with cd(env.release_path):
+        with shell_env(GOROOT=goroot,GOPATH=gopath,GOBIN=gobin):
+            run("git pull" )
+            run("$GOBIN/go get")
+
+def start(goroot="/usr/lib/go", gobin="/usr/bin", gopath="/home/%s/lib/go" % env.user):
+    variables = { 'goroot': goroot, 'gobin':gobin,'gopath': gopath, 'release_path':env.release_path} 
+    run("export GOROOT=%(goroot)s;export GOPATH=%(gopath)s;export GOBIN=%(gobin)s;cd %(release_path)s; $GOBIN/go run CuantoQuedaBot" %  variables )
+    
