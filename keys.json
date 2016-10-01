@@ -1,0 +1,12 @@
+{
+    "comment": "API keys diversas usadas por el programa",
+    "keys" : {
+	"Telegram": { "bot" : "XXXYYY"},
+	"PaperTrail": { "port": 1234,
+			"host": "host.papertrail.com" },
+	"logz.io": { "host": "whatever.logz.io:8080",
+		     "token": "whatever token" },
+	"aiven" : { "url": "whatever",
+		    "user": "whatever" }
+    }
+}
