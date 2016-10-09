@@ -8,13 +8,13 @@ import (
     "fmt" 
     "strings"
     "strconv" 
-    "net/http"
+//    "net/http"
 
     "encoding/json"
     "io/ioutil"
 
     "github.com/Sirupsen/logrus"   
-    "github.com/bshuster-repo/logrus-logstash-hook"
+//    "github.com/bshuster-repo/logrus-logstash-hook"
     "gopkg.in/polds/logrus-papertrail-hook.v2"
     "github.com/JJ/telebot"
 )
