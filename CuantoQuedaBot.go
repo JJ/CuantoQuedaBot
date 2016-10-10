@@ -15,6 +15,7 @@ import (
 
     "github.com/Sirupsen/logrus"   
 //    "github.com/bshuster-repo/logrus-logstash-hook"
+//    "ripcurld00d/logrus-logzio-hook"
     "gopkg.in/polds/logrus-papertrail-hook.v2"
     "github.com/JJ/telebot"
 )
