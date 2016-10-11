@@ -8,14 +8,14 @@ import (
     "fmt" 
     "strings"
     "strconv" 
-//    "net/http"
-
+    "net/http"
+    "crypto/tls"
     "encoding/json"
     "io/ioutil"
 
     "github.com/Sirupsen/logrus"   
 //    "github.com/bshuster-repo/logrus-logstash-hook"
-//    "ripcurld00d/logrus-logzio-hook"
+    "github.com/ripcurld00d/logrus-logzio-hook"
     "gopkg.in/polds/logrus-papertrail-hook.v2"
     "github.com/JJ/telebot"
 )
@@ -45,23 +45,22 @@ func init() {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	name, _ := os.Hostname()
 	// Declare logrus plugin
-	// if os.Getenv("LOGZ_TOKEN") != "" {
-	// 	fields := logrus.Fields{
-	// 		"ID": os.Getenv("LOGZ_TOKEN"),
-	// 		"Host": os.Getenv("HOST"),
-	// 		"Username": os.Getenv("USER"),
-	// 	}
-	// 	httpsClient := &http.Client{Transport: &http.Transport{TLSClientConfig{InsecureSkipVerify: true}}}
+	if os.Getenv("LOGZ_TOKEN") != "" {
+		fields := logrus.Fields{
+			"ID": os.Getenv("LOGZ_TOKEN"),
+			"Host": os.Getenv("HOST"),
+			"Username": os.Getenv("USER"),
+		}
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		httpsClient := &http.Client{Transport: tr}
 
-	// 	hook, err := logzio.NewHookWithFields(os.Getenv("LOGZ_HOST"), "CuantoQuedaBot", fields)
-	// 	if  err != nil {
-	// 		log.WithFields(logrus.Fields{
-	// 			"error": err,
-	// 		}).Fatal("Hook error")
-	// 	}
-	// 	logrus.AddHook(hook)
+		hook := logzio.New(os.Getenv("LOGZ_HOST"), "CuantoQuedaBot", fields)
+		hook.SetClient(httpsClient)
+		logrus.AddHook(hook)
 
-	// }
+	}
 
 	if os.Getenv("PAPERTRAIL_HOST") != "" {
 
