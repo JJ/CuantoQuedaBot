@@ -16,7 +16,6 @@ import (
     "math"
 
     "github.com/Sirupsen/logrus"
-//    "github.com/bshuster-repo/logrus-logstash-hook"
     "github.com/ripcurld00d/logrus-logzio-hook"
     "gopkg.in/polds/logrus-papertrail-hook.v2"
     "github.com/JJ/telebot"
@@ -109,7 +108,7 @@ func init() {
 			Title: hito.Title,
 			URL:   this_url,
 			InputMessageContent: &telebot.InputTextMessageContent{
-				Text:            strings.Join( []string{"Hito ", strconv.Itoa(i), ":", hito.Title, " =>", this_url }, " "),
+				Text: strings.Join( []string{"Hito ", strconv.Itoa(i), ":", hito.Title, " =>", this_url }, " "),
 				DisablePreview: false,
 			},
 		}
@@ -161,51 +160,51 @@ func main() {
 }
 
 func getResponse(hito_n int, queda time.Duration) string {
-  var response bytes.Buffer
-  var string_hito string
-  var string_tiempo string
-
-  queda_minutos := queda.Minutes()
-
-  if queda_minutos < 0 {
-    string_hito = fmt.Sprintf("Hito %d finalizado hace ", hito_n)
-    queda_minutos = queda_minutos*(-1)
-  } else {
-    string_hito = fmt.Sprintf("Hito %d :\n\tQuedan ", hito_n)
-  }
-
-  response.WriteString(string_hito)
-
-  switch {
-  case queda_minutos > 1440: // More than 1 day
-    div := float64(math.Abs(queda.Hours()))/24.0
-    dias := math.Floor(div)
-    resto := div - dias
-
-    div = resto * 24
-    horas := math.Floor(div)
-    resto = div - horas
-
-    minutos := math.Floor(resto * 60)
-
-    string_tiempo = fmt.Sprintf("%.0f días, %.0f horas y %.0f minutos.", dias, horas, minutos)
-
-  case queda_minutos > 60: // More than 1 hour
-    queda_horas := math.Abs(queda.Hours())
-    horas := math.Floor(queda_horas)
-    resto := queda_horas - horas
-    minutos := math.Floor(resto * 60)
-
-    string_tiempo = fmt.Sprintf("%.0f horas y %.0f minutos.", horas, minutos)
-
-  default:
-    minutos := math.Floor(math.Abs(queda.Minutes()))
-    string_tiempo = fmt.Sprintf("%.0f minutos.", minutos)
-  }
-
-  response.WriteString(string_tiempo)
-
-  return response.String()
+	var response bytes.Buffer
+	var string_hito string
+	var string_tiempo string
+	
+	queda_minutos := queda.Minutes()
+	
+	if queda_minutos < 0 {
+		string_hito = fmt.Sprintf("Hito %d finalizado hace ", hito_n)
+		queda_minutos = queda_minutos*(-1)
+	} else {
+		string_hito = fmt.Sprintf("Hito %d :\n\tQuedan ", hito_n)
+	}
+	
+	response.WriteString(string_hito)
+	
+	switch {
+	case queda_minutos > 1440: // More than 1 day
+		div := float64(math.Abs(queda.Hours()))/24.0
+		dias := math.Floor(div)
+		resto := div - dias
+		
+		div = resto * 24
+		horas := math.Floor(div)
+		resto = div - horas
+		
+		minutos := math.Floor(resto * 60)
+		
+		string_tiempo = fmt.Sprintf("%.0f días, %.0f horas y %.0f minutos.", dias, horas, minutos)
+		
+	case queda_minutos > 60: // More than 1 hour
+		queda_horas := math.Abs(queda.Hours())
+		horas := math.Floor(queda_horas)
+		resto := queda_horas - horas
+		minutos := math.Floor(resto * 60)
+		
+		string_tiempo = fmt.Sprintf("%.0f horas y %.0f minutos.", horas, minutos)
+		
+	default:
+		minutos := math.Floor(math.Abs(queda.Minutes()))
+		string_tiempo = fmt.Sprintf("%.0f minutos.", minutos)
+	}
+	
+	response.WriteString(string_tiempo)
+	
+	return response.String()
 }
 
 func messages() {
