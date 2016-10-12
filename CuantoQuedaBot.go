@@ -141,11 +141,29 @@ func main() {
 	    bot.SendMessage(context.Message.Chat, fmt.Sprintf("Hito %d\n\t %s", hito_n, text.Text ), nil)
     })
 
+    // when no arguments given, return all posible messages. 
+    bot.Handle("/hito", func(context telebot.Context) {
+	    for hito_n,_ := range results {
+	    hito := results[hito_n].(*telebot.InlineQueryResultArticle)
+	    text := hito.InputMessageContent.(*telebot.InputTextMessageContent)
+	    bot.SendMessage(context.Message.Chat, fmt.Sprintf("Hito %d\n\t %s", hito_n, text.Text ), nil)
+	    }
+    })
+
     // named groups found in routes will get injected in the controller as arguments
     bot.Handle("/cuanto_queda (?P<n>[0-9]+)", func(context telebot.Context) {
 	    hito_n, _ := strconv.Atoi(context.Args["n"])
 	    queda := fechas[hito_n].Sub(time.Now())
 	    bot.SendMessage(context.Message.Chat, fmt.Sprintf("Hito %d\n\t Quedan %f horas", hito_n, queda.Hours() ), nil)
+    })
+ 
+	// when no arguments given, return all posible messages. 
+    bot.Handle("/cuanto_queda", func(context telebot.Context){
+    	for hito_n,_ := range results {
+    		queda := fechas[hito_n].Sub(time.Now())
+    		response := getResponse(hito_n, queda)
+    		bot.SendMessage(context.Message.Chat, response, nil)
+    	}
     })
 
     bot.Messages = make(chan telebot.Message, 1000)
