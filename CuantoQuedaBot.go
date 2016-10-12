@@ -5,15 +5,17 @@ import (
 
     "time"
     "os"
-    "fmt" 
+    "fmt"
     "strings"
-    "strconv" 
+    "strconv"
     "net/http"
     "crypto/tls"
     "encoding/json"
     "io/ioutil"
+    "bytes"
+    "math"
 
-    "github.com/Sirupsen/logrus"   
+    "github.com/Sirupsen/logrus"
 //    "github.com/bshuster-repo/logrus-logstash-hook"
     "github.com/ripcurld00d/logrus-logzio-hook"
     "gopkg.in/polds/logrus-papertrail-hook.v2"
@@ -41,7 +43,7 @@ var log = logrus.New()
 func init() {
 
 	// Log as JSON instead of the default ASCII formatter.
-	
+
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	name, _ := os.Hostname()
 	// Declare logrus plugin
@@ -70,7 +72,7 @@ func init() {
 			Port: udp_port,
 			Hostname: name,
 			Appname: "CuantoQuedaBot",
-		})		
+		})
 		if  err != nil {
 			log.WithFields(logrus.Fields{
 				"error": err,
@@ -78,7 +80,7 @@ func init() {
 		}
 		log.Hooks.Add(hook)
 	}
-	
+
 	// Load milestones array
 	file, e := ioutil.ReadFile("./hitos.json")
 	if e != nil {
@@ -100,7 +102,7 @@ func init() {
 		this_day, _ := strconv.Atoi(d[0])
 		this_month, _ := strconv.Atoi(d[1])
 		this_year, _ := strconv.Atoi(d[2])
-		fechas = append( fechas, 
+		fechas = append( fechas,
 			time.Date(this_year, time.Month(this_month), this_day,
 				12,30,0,0, time.Local))
 		article := &telebot.InlineQueryResultArticle{
@@ -115,7 +117,7 @@ func init() {
 
 	}
 //	fmt.Printf(" Results %v", results );
-	
+
 }
 
 func main() {
@@ -145,7 +147,8 @@ func main() {
     bot.Handle("/cuanto_queda (?P<n>[0-9]+)", func(context telebot.Context) {
 	    hito_n, _ := strconv.Atoi(context.Args["n"])
 	    queda := fechas[hito_n].Sub(time.Now())
-	    bot.SendMessage(context.Message.Chat, fmt.Sprintf("Hito %d\n\t Quedan %f horas", hito_n, queda.Hours() ), nil)
+      response := getResponse(hito_n, queda)
+	    bot.SendMessage(context.Message.Chat, response, nil)
     })
 
     bot.Messages = make(chan telebot.Message, 1000)
@@ -155,6 +158,54 @@ func main() {
     go queries()
 
     bot.Start(1 * time.Second)
+}
+
+func getResponse(hito_n int, queda time.Duration) string {
+  var response bytes.Buffer
+  var string_hito string
+  var string_tiempo string
+
+  queda_minutos := queda.Minutes()
+
+  if queda_minutos < 0 {
+    string_hito = fmt.Sprintf("Hito %d finalizado hace ", hito_n)
+    queda_minutos = queda_minutos*(-1)
+  } else {
+    string_hito = fmt.Sprintf("Hito %d :\n\tQuedan ", hito_n)
+  }
+
+  response.WriteString(string_hito)
+
+  switch {
+  case queda_minutos > 1440: // More than 1 day
+    div := float64(math.Abs(queda.Hours()))/24.0
+    dias := math.Floor(div)
+    resto := div - dias
+
+    div = resto * 24
+    horas := math.Floor(div)
+    resto = div - horas
+
+    minutos := math.Floor(resto * 60)
+
+    string_tiempo = fmt.Sprintf("%.0f días, %.0f horas y %.0f minutos.", dias, horas, minutos)
+
+  case queda_minutos > 60: // More than 1 hour
+    queda_horas := math.Abs(queda.Hours())
+    horas := math.Floor(queda_horas)
+    resto := queda_horas - horas
+    minutos := math.Floor(resto * 60)
+
+    string_tiempo = fmt.Sprintf("%.0f horas y %.0f minutos.", horas, minutos)
+
+  default:
+    minutos := math.Floor(math.Abs(queda.Minutes()))
+    string_tiempo = fmt.Sprintf("%.0f minutos.", minutos)
+  }
+
+  response.WriteString(string_tiempo)
+
+  return response.String()
 }
 
 func messages() {
@@ -193,4 +244,3 @@ func queries() {
         }
     }
 }
-
