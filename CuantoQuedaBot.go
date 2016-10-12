@@ -35,6 +35,8 @@ type Data struct {
 
 var hitos []Hito
 var results []telebot.InlineQueryResult
+var opicionesText bytes.Buffer
+var opicionesNumberText bytes.Buffer
 var ahora = time.Now()
 var fechas []time.Time
 var log = logrus.New()
@@ -96,6 +98,11 @@ func init() {
 	}
 
 	for i,hito := range hitos_data.Hitos {
+
+		//adding opciones to choose 
+		opicionesText.WriteString(strconv.Itoa(i) + "-" + hito.Title + "\r\n")
+		opicionesNumberText.WriteString(strconv.Itoa(i) + "\r\n")
+
 		this_url := strings.Join( []string{"https://jj.github.io/IV/documentos/proyecto/",hito.File}, "/")
 		d := strings.Split(hito.Date,"/")
 		this_day, _ := strconv.Atoi(d[0])
@@ -115,8 +122,48 @@ func init() {
 		results = append( results, article )
 
 	}
+	log.Info("Opciones:\r\n"+ opicionesText.String())
 //	fmt.Printf(" Results %v", results );
 
+}
+
+func botHito(context telebot.Context){
+ 	hito_n, err := strconv.Atoi(context.Args["n"])
+ 	if err!=nil {  
+	 	//no tiene parametross
+	 	log.Info("args blank")
+	 	botOptions(context)
+ 	}else{
+	 	hito, _ := results[hito_n].(*telebot.InlineQueryResultArticle)
+    	text, _ := hito.InputMessageContent.(*telebot.InputTextMessageContent)
+    	bot.SendMessage(context.Message.Chat, fmt.Sprintf("Hito %d\n\t %s", hito_n, text.Text ), nil)	
+ 	}   
+}
+
+func botHelp(context telebot.Context){
+    bot.SendMessage(context.Message.Chat, "Órdenes:\n\t/hito <número> ⇒ Describe hito\n\t/cuanto_queda <número> ⇒ Horas hasta entrega", nil)
+    botOptions(context)
+}
+
+func botOptions(context telebot.Context){
+ 	bot.SendMessage(context.Message.Chat, "Opiciones:\n\t/hito <número> ⇒ Describe hito\n\t/cuanto_queda <número> ⇒ Horas hasta entrega", nil)
+    bot.SendMessage(context.Message.Chat, "elegir entre:\n\t"+opicionesText.String(), nil)
+    bot.SendMessage(context.Message.Chat, "ejemplo : \"/hito 1\" o \"/cuanto_queda 1\"", nil)
+}
+
+func botCuantoQueda(context telebot.Context) {
+	
+	 hito_n, err := strconv.Atoi(context.Args["n"])
+	 if err!=nil {  
+	 	//no tiene parametross
+	 	log.Info("args blank")
+	 	botOptions(context)
+	 }else{
+	 	queda := fechas[hito_n].Sub(time.Now())
+     	response := getResponse(hito_n, queda)
+	 	bot.SendMessage(context.Message.Chat, response, nil)
+	 }
+	
 }
 
 func main() {
@@ -128,26 +175,40 @@ func main() {
     if err != nil {
         log.Error(err)
     }
-
+    	//criando em start para dar opciones para o user
+     bot.Handle("/start", func (context telebot.Context) {
+     	botOptions(context)
+    })
+   
     // routes are compiled as regexps
+     //adicionando +ajuda
     bot.Handle("/ayuda", func (context telebot.Context) {
-	    bot.SendMessage(context.Message.Chat, "Órdenes:\n\t/hito <número> ⇒ Describe hito\n\t/cuanto_queda <número> ⇒ Horas hasta entrega", nil)
+	    botHelp(context)
     })
 
     // named groups found in routes will get injected in the controller as arguments
     bot.Handle("/hito (?P<n>[0-9]+)", func(context telebot.Context) {
-	    hito_n, _ := strconv.Atoi(context.Args["n"])
-	    hito, _ := results[hito_n].(*telebot.InlineQueryResultArticle)
-	    text, _ := hito.InputMessageContent.(*telebot.InputTextMessageContent)
-	    bot.SendMessage(context.Message.Chat, fmt.Sprintf("Hito %d\n\t %s", hito_n, text.Text ), nil)
+	    botHito(context)
     })
 
     // named groups found in routes will get injected in the controller as arguments
     bot.Handle("/cuanto_queda (?P<n>[0-9]+)", func(context telebot.Context) {
-	    hito_n, _ := strconv.Atoi(context.Args["n"])
-	    queda := fechas[hito_n].Sub(time.Now())
-      response := getResponse(hito_n, queda)
-	    bot.SendMessage(context.Message.Chat, response, nil)
+	    botCuantoQueda(context)
+    })
+
+ 	//blank path hito
+    bot.Handle("/hito", func(context telebot.Context) {
+		botCuantoQueda(context)
+    })
+
+    //blank path
+    bot.Handle("/cuanto_queda", func(context telebot.Context) {
+		botCuantoQueda(context)
+    })
+    //any search, all matchs in the end show options.
+    bot.Handle("(([A-Za-z1234567890])+)", func(context telebot.Context) {
+		log.Error("blank")
+		botOptions(context)
     })
 
     bot.Messages = make(chan telebot.Message, 1000)
