@@ -31,8 +31,9 @@ fichero [`hitos.json`](hitos.json) y poner los títulos y URLs que
 quieras. 
 
 
-## Para probar como funciona 
+## Utilizar el bot
 
 Existe un bot que se ejecuta en un servidor de Cloud9 y utiliza el código de este repositorio, actualizándose automáticamente. 
-Para ver qué es lo que hace basta con abrir una conversación de telegram con él a través de este enlace: 
+Para utilizar el bot tal y como está programado en este repositorio basta con iniciar una conversación en telegram con él a través de este enlace:
+
 [https://telegram.me/CuantoQuedaBot](https://telegram.me/CuantoQuedaBot)
