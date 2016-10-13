@@ -29,4 +29,3 @@ Si quieres cambiar las contestaciones, no tienes más que editar el
 fichero [`hitos.json`](hitos.json) y poner los títulos y URLs que
 quieras. 
 
-ola
