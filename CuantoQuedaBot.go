@@ -131,7 +131,7 @@ func botHito(context telebot.Context){
  	hito_n, err := strconv.Atoi(context.Args["n"])
  	if err!=nil {  
 	 	//no tiene parametross
-	 	log.Info("args blank")
+	 	log.Info("No args")
 	 	botOptions(context)
  	}else{
 	 	hito, _ := results[hito_n].(*telebot.InlineQueryResultArticle)
@@ -197,7 +197,7 @@ func main() {
     })
 
  	//blank path hito
-    bot.Handle("/hito", func(context telebot.Context) {
+    bot.Handle("/hito", func(context telebot.Context) { // sería mejor modificar la expresión regular...
 		botCuantoQueda(context)
     })
 
@@ -206,8 +206,8 @@ func main() {
 		botCuantoQueda(context)
     })
     //any search, all matchs in the end show options.
-    bot.Handle("(([A-Za-z1234567890])+)", func(context telebot.Context) {
-		log.Error("blank")
+    bot.Handle("(([A-Za-z1234567890])+)", func(context telebot.Context) { // tampoco me gusta este error...
+		log.Error("blank") // tampoco es un error per se... 
 		botOptions(context)
     })
 
