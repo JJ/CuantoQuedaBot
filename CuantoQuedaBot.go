@@ -49,22 +49,9 @@ func init() {
 	name, _ := os.Hostname()
 	// Declare logrus plugin
 	if os.Getenv("LOGZ_TOKEN") != "" {
-		fields := logrus.Fields{
-			"ID": os.Getenv("LOGZ_TOKEN"),
-			"Host": name,
-			"Username": os.Getenv("USER"),
-		}
-		tr := &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		}
-		httpsClient := &http.Client{Transport: tr}
-
-		hook := logzio.New(os.Getenv("LOGZ_HOST"), "CuantoQuedaBot", fields)
-		hook.SetClient(httpsClient)
-		logrus.AddHook(hook)
-
+		logzio_add( name, os.Getenv("LOGZ_TOKEN"),  os.Getenv("LOGZ_HOST") )
 	}
-
+	
 	if os.Getenv("PAPERTRAIL_HOST") != "" {
 		papertrail_add( name, os.Getenv("PAPERTRAIL_HOST"), os.Getenv("PAPERTRAIL_PORT") )
 	}
@@ -128,14 +115,14 @@ func botHito(context telebot.Context){
 }
 
 func botHelp(context telebot.Context){
-    bot.SendMessage(context.Message.Chat, "Órdenes:\n\t/hito <número> ⇒ Describe hito\n\t/cuanto_queda <número> ⇒ Horas hasta entrega", nil)
-    botOptions(context)
+	bot.SendMessage(context.Message.Chat, "Órdenes:\n\t/hito <número> ⇒ Describe hito\n\t/cuanto_queda <número> ⇒ Horas hasta entrega", nil)
+	botOptions(context)
 }
 
 func botOptions(context telebot.Context){
  	bot.SendMessage(context.Message.Chat, "Opiciones:\n\t/hito <número> ⇒ Describe hito\n\t/cuanto_queda <número> ⇒ Horas hasta entrega", nil)
-    bot.SendMessage(context.Message.Chat, "elegir entre:\n\t"+opicionesText.String(), nil)
-    bot.SendMessage(context.Message.Chat, "ejemplo : \"/hito 1\" o \"/cuanto_queda 1\"", nil)
+	bot.SendMessage(context.Message.Chat, "elegir entre:\n\t"+opicionesText.String(), nil)
+	bot.SendMessage(context.Message.Chat, "ejemplo : \"/hito 1\" o \"/cuanto_queda 1\"", nil)
 }
 
 func botCuantoQueda(context telebot.Context) {
@@ -307,4 +294,20 @@ func papertrail_add( name string, papertrail_host string, papertrail_port string
 		}).Fatal("Hook error")
 	}
 	log.Hooks.Add(hook)
+}
+
+func logzio_add( name string,  token string, host string ) {
+	fields := logrus.Fields{
+		"ID": token,
+		"Host": name,
+		"Username": os.Getenv("USER"),
+	}
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	httpsClient := &http.Client{Transport: tr}
+	
+	hook := logzio.New(host, "CuantoQuedaBot", fields)
+	hook.SetClient(httpsClient)
+	logrus.AddHook(hook)
 }
