@@ -51,7 +51,7 @@ func init() {
 	if os.Getenv("LOGZ_TOKEN") != "" {
 		fields := logrus.Fields{
 			"ID": os.Getenv("LOGZ_TOKEN"),
-			"Host": os.Getenv("HOST"),
+			"Host": name,
 			"Username": os.Getenv("USER"),
 		}
 		tr := &http.Transport{
@@ -66,20 +66,7 @@ func init() {
 	}
 
 	if os.Getenv("PAPERTRAIL_HOST") != "" {
-
-		udp_port, _ := strconv.Atoi(os.Getenv("PAPERTRAIL_PORT"))
-		hook, err := logrus_papertrail.NewPapertrailHook(&logrus_papertrail.Hook{
-			Host: os.Getenv("PAPERTRAIL_HOST"),
-			Port: udp_port,
-			Hostname: name,
-			Appname: "CuantoQuedaBot",
-		})
-		if  err != nil {
-			log.WithFields(logrus.Fields{
-				"error": err,
-			}).Fatal("Hook error")
-		}
-		log.Hooks.Add(hook)
+		papertrail_add( name, os.Getenv("PAPERTRAIL_HOST"), os.Getenv("PAPERTRAIL_PORT") )
 	}
 
 	// Load milestones array
@@ -303,4 +290,21 @@ func queries() {
 	    }).Error("Failed to respond to query:")
         }
     }
+}
+
+// adds papertrail as hook, uses global log
+func papertrail_add( name string, papertrail_host string, papertrail_port string ) {
+	udp_port, _ := strconv.Atoi(papertrail_port)
+	hook, err := logrus_papertrail.NewPapertrailHook(&logrus_papertrail.Hook{
+		Host: papertrail_port,
+		Port: udp_port,
+		Hostname: name,
+		Appname: "CuantoQuedaBot",
+	})
+	if  err != nil {
+		log.WithFields(logrus.Fields{
+			"error": err,
+		}).Fatal("Hook error")
+	}
+	log.Hooks.Add(hook)
 }
