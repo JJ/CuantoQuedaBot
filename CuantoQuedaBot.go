@@ -35,8 +35,8 @@ type Data struct {
 
 var hitos []Hito
 var results []telebot.InlineQueryResult
-var opicionesText bytes.Buffer
-var opicionesNumberText bytes.Buffer
+var opcionesText bytes.Buffer
+var opcionesNumberText bytes.Buffer
 var ahora = time.Now()
 var fechas []time.Time
 var log = logrus.New()
@@ -74,8 +74,8 @@ func init() {
 	for i,hito := range hitos_data.Hitos {
 
 		//adding opciones to choose 
-		opicionesText.WriteString(strconv.Itoa(i) + "-" + hito.Title + "\r\n")
-		opicionesNumberText.WriteString(strconv.Itoa(i) + "\r\n")
+		opcionesText.WriteString(strconv.Itoa(i) + "-" + hito.Title + "\r\n")
+		opcionesNumberText.WriteString(strconv.Itoa(i) + "\r\n")
 
 		this_url := strings.Join( []string{"https://jj.github.io/IV/documentos/proyecto/",hito.File}, "/")
 		d := strings.Split(hito.Date,"/")
@@ -96,7 +96,7 @@ func init() {
 		results = append( results, article )
 
 	}
-	log.Info("Opciones:\r\n"+ opicionesText.String())
+	log.Info("Opciones:\r\n"+ opcionesText.String())
 //	fmt.Printf(" Results %v", results );
 
 }
@@ -105,7 +105,9 @@ func botHito(context telebot.Context){
  	hito_n, err := strconv.Atoi(context.Args["n"])
  	if err!=nil {  
 	 	//no tiene parametross
-	 	log.Info("No args")
+		log.WithFields(logrus.Fields{
+			"error": err,
+		}).Error("File error", err)
 	 	botOptions(context)
  	}else{
 	 	hito, _ := results[hito_n].(*telebot.InlineQueryResultArticle)
@@ -120,8 +122,8 @@ func botHelp(context telebot.Context){
 }
 
 func botOptions(context telebot.Context){
- 	bot.SendMessage(context.Message.Chat, "Opiciones:\n\t/hito <número> ⇒ Describe hito\n\t/cuanto_queda <número> ⇒ Horas hasta entrega", nil)
-	bot.SendMessage(context.Message.Chat, "elegir entre:\n\t"+opicionesText.String(), nil)
+ 	bot.SendMessage(context.Message.Chat, "Opciones:\n\t/hito <número> ⇒ Describe hito\n\t/cuanto_queda <número> ⇒ Horas hasta entrega", nil)
+	bot.SendMessage(context.Message.Chat, "elegir entre:\n\t"+opcionesText.String(), nil)
 	bot.SendMessage(context.Message.Chat, "ejemplo : \"/hito 1\" o \"/cuanto_queda 1\"", nil)
 }
 
@@ -172,18 +174,18 @@ func main() {
 
  	//blank path hito
     bot.Handle("/hito", func(context telebot.Context) { // sería mejor modificar la expresión regular...
-		botCuantoQueda(context)
+	    botCuantoQueda(context)
     })
 
     //blank path
-    bot.Handle("/cuanto_queda", func(context telebot.Context) {
-		botCuantoQueda(context)
-    })
+    // bot.Handle("/cuanto_queda", func(context telebot.Context) {
+    // 		botCuantoQueda(context)
+    // })
     //any search, all matchs in the end show options.
-    bot.Handle("(([A-Za-z1234567890])+)", func(context telebot.Context) { // tampoco me gusta este error...
-		log.Error("blank") // tampoco es un error per se... 
-		botOptions(context)
-    })
+    // bot.Handle("(([A-Za-z1234567890])+)", func(context telebot.Context) { // tampoco me gusta este error...
+    // 		log.Error("blank") // tampoco es un error per se... 
+    // 		botOptions(context)
+    // })
 
     bot.Messages = make(chan telebot.Message, 1000)
     bot.Queries = make(chan telebot.Query, 1000)
