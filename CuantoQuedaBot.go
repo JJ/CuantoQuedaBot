@@ -129,17 +129,17 @@ func botOptions(context telebot.Context){
 
 func botCuantoQueda(context telebot.Context) {
 	
-	 hito_n, err := strconv.Atoi(context.Args["n"])
-	 if err!=nil {  
-	 	//no tiene parametross
-	 	log.Info("args blank")
-	 	botOptions(context)
-	 }else{
-	 	queda := fechas[hito_n].Sub(time.Now())
-     	response := getResponse(hito_n, queda)
-	 	bot.SendMessage(context.Message.Chat, response, nil)
-	 }
-	
+	log.WithFields(logrus.Fields{ "n": context.Args["n"]}).Info("Cuanto Queda")
+	hito_n, err := strconv.Atoi(context.Args["n"])
+	if err!=nil {  
+		//no tiene parametross
+		log.Info("args blank")
+		botOptions(context)
+	}else{
+		queda := fechas[hito_n].Sub(time.Now())
+		response := getResponse(hito_n, queda)
+		bot.SendMessage(context.Message.Chat, response, nil)
+	}
 }
 
 func main() {
@@ -168,14 +168,14 @@ func main() {
     })
 
     // named groups found in routes will get injected in the controller as arguments
-    bot.Handle("/cuanto_queda (?P<n>[0-9]+)", func(context telebot.Context) {
+    bot.Handle("/cuanto_queda( ?P<n>[0-9]*)", func(context telebot.Context) {
 	    botCuantoQueda(context)
     })
 
- 	//blank path hito
-    bot.Handle("/hito", func(context telebot.Context) { // sería mejor modificar la expresión regular...
-	    botCuantoQueda(context)
-    })
+    // 	//blank path hito
+    // bot.Handle("/hito", func(context telebot.Context) { // sería mejor modificar la expresión regular...
+    // 	    botCuantoQueda(context)
+    // })
 
     //blank path
     // bot.Handle("/cuanto_queda", func(context telebot.Context) {
