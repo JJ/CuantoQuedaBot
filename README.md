@@ -11,6 +11,7 @@ Si tienes instalado Go, para que esto funcione dale a
 (tendrás que definir antes GOPATH y GOBIN para que instale
 correctamente la librería).
 
+
 Consíguete despues
 [tu propio API key para Telegram creando tu robot](http://bytelix.com/guias/crear-propio-bot-telegram/). Asígnaselo
 a una variable de entorno con
@@ -28,3 +29,11 @@ encendido todo el tiempo (o casi) como Nitrous o Cloud9.
 Si quieres cambiar las contestaciones, no tienes más que editar el
 fichero [`hitos.json`](hitos.json) y poner los títulos y URLs que
 quieras. 
+
+
+## Utilizar el bot
+
+Existe un bot que se ejecuta en un servidor de Cloud9 y utiliza el código de este repositorio, actualizándose automáticamente. 
+Para utilizar el bot tal y como está programado en este repositorio basta con iniciar una conversación en telegram con él a través de este enlace:
+
+[https://telegram.me/CuantoQuedaBot](https://telegram.me/CuantoQuedaBot)
