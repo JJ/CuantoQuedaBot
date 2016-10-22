@@ -45,7 +45,11 @@ programa en particular y haz
 	fab build
 	fab start
 
-Para echarlo a andar. 
+Para echarlo a andar. Cuando te canses,
+
+	fab stop
+
+detendrá el proceso remoto
 
 ## Utilizar el bot
 
