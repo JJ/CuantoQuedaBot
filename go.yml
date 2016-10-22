@@ -1,6 +1,10 @@
 ---
 - hosts: exoscale
   remote_user: root
+  vars:
+    password: unPbyhGuoKiAc
   tasks:
     - name: Instala supervisor
       apt: name=supervisor state=present
+    - name: Crea usuario
+      user: name=bot shell=/bin/bash groups=users,sudo append=yes password={{password}}
