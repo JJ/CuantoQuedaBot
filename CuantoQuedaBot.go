@@ -102,7 +102,8 @@ func init() {
 }
 
 func botHito(context telebot.Context){
- 	hito_n, err := strconv.Atoi(context.Args["n"])
+	log.WithFields(logrus.Fields{ "n": context.Args["n"]}).Info("Cuanto Queda")
+ 	hito_n, err := strconv.Atoi(strings.TrimSpace(context.Args["n"]))
  	if err!=nil {  
 	 	//no tiene parametross
 		log.WithFields(logrus.Fields{
@@ -114,17 +115,6 @@ func botHito(context telebot.Context){
     	text, _ := hito.InputMessageContent.(*telebot.InputTextMessageContent)
     	bot.SendMessage(context.Message.Chat, fmt.Sprintf("Hito %d\n\t %s", hito_n, text.Text ), nil)	
  	}   
-}
-
-func botHelp(context telebot.Context){
-	bot.SendMessage(context.Message.Chat, "Órdenes:\n\t/hito <número> ⇒ Describe hito\n\t/cuanto_queda <número> ⇒ Horas hasta entrega", nil)
-	botOptions(context)
-}
-
-func botOptions(context telebot.Context){
- 	bot.SendMessage(context.Message.Chat, "Opciones:\n\t/hito <número> ⇒ Describe hito\n\t/cuanto_queda <número> ⇒ Horas hasta entrega", nil)
-	bot.SendMessage(context.Message.Chat, "elegir entre:\n\t"+opcionesText.String(), nil)
-	bot.SendMessage(context.Message.Chat, "ejemplo : \"/hito 1\" o \"/cuanto_queda 1\"", nil)
 }
 
 func botCuantoQueda(context telebot.Context) {
@@ -140,6 +130,17 @@ func botCuantoQueda(context telebot.Context) {
 		response := getResponse(hito_n, queda)
 		bot.SendMessage(context.Message.Chat, response, nil)
 	}
+}
+
+func botHelp(context telebot.Context){
+	bot.SendMessage(context.Message.Chat, "Órdenes:\n\t/hito <número> ⇒ Describe hito\n\t/cuanto_queda <número> ⇒ Horas hasta entrega", nil)
+	botOptions(context)
+}
+
+func botOptions(context telebot.Context){
+ 	bot.SendMessage(context.Message.Chat, "Opciones:\n\t/hito <número> ⇒ Describe hito\n\t/cuanto_queda <número> ⇒ Horas hasta entrega", nil)
+	bot.SendMessage(context.Message.Chat, "elegir entre:\n\t"+opcionesText.String(), nil)
+	bot.SendMessage(context.Message.Chat, "ejemplo : \"/hito 1\" o \"/cuanto_queda 1\"", nil)
 }
 
 func main() {
