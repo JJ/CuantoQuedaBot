@@ -32,7 +32,7 @@ def start(goroot="/usr/lib/go", gobin="/usr/bin",
                        PAPERTRAIL_PORT=papertrail_port,
                        LOGZ_HOST=logz_host,
                        LOGZ_TOKEN=logz_token):
-            run("export;nohup $GOBIN/go run CuantoQuedaBot.go &", pty=False )
+            run("echo $GOPATH; nohup $GOBIN/go run CuantoQuedaBot.go >& bot.log < /dev/null &", pty=False )
             
 def stop():
     run("pkill CuantoQuedaBot")

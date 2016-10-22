@@ -97,7 +97,7 @@ func init() {
 
 	}
 	log.Info("Opciones:\r\n"+ opcionesText.String())
-//	fmt.Printf(" Results %v", results );
+
 
 }
 
@@ -298,4 +298,7 @@ func logzio_add( name string,  token string, host string ) {
 	hook := logzio.New(host, "CuantoQuedaBot", fields)
 	hook.SetClient(httpsClient)
 	logrus.AddHook(hook)
+	log.WithFields(logrus.Fields{
+		"hook": hook,
+	}).Info("Añade el hook")
 }
