@@ -130,10 +130,10 @@ func botOptions(context telebot.Context){
 func botCuantoQueda(context telebot.Context) {
 	
 	log.WithFields(logrus.Fields{ "n": context.Args["n"]}).Info("Cuanto Queda")
-	hito_n, err := strconv.Atoi(context.Args["n"])
+	hito_n, err := strconv.Atoi(strings.TrimSpace(context.Args["n"]))
 	if err!=nil {  
 		//no tiene parametross
-		log.Info("args blank")
+		log.WithFields(logrus.Fields{ "error": err }).Error("args blank")
 		botOptions(context)
 	}else{
 		queda := fechas[hito_n].Sub(time.Now())
@@ -163,12 +163,12 @@ func main() {
     })
 
     // named groups found in routes will get injected in the controller as arguments
-    bot.Handle("/hito (?P<n>[0-9]+)", func(context telebot.Context) {
+    bot.Handle("/hito(?P<n> *[0-9]*)", func(context telebot.Context) {
 	    botHito(context)
     })
 
     // named groups found in routes will get injected in the controller as arguments
-    bot.Handle("/cuanto_queda( ?P<n>[0-9]*)", func(context telebot.Context) {
+    bot.Handle("/cuanto_queda(?P<n> *[0-9]*)", func(context telebot.Context) {
 	    botCuantoQueda(context)
     })
 
