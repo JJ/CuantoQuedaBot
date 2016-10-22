@@ -21,13 +21,17 @@ def start(goroot="/usr/lib/go", gobin="/usr/bin",
           gopath="/home/%s/lib/go" % env.user,
           bot_token=os.environ['BOT_TOKEN'],
           papertrail_host=os.environ['PAPERTRAIL_HOST'],
-          papertrail_port=os.environ['PAPERTRAIL_PORT']):
+          papertrail_port=os.environ['PAPERTRAIL_PORT'],
+          logz_host=os.environ['LOGZ_HOST'],
+          logz_token=os.environ['LOGZ_TOKEN']):
     
     with cd(env.release_path):
         with shell_env(GOROOT=goroot,GOPATH=gopath,
                        GOBIN=gobin,BOT_TOKEN=bot_token,
                        PAPERTRAIL_HOST=papertrail_host,
-                       PAPERTRAIL_PORT=papertrail_port):
+                       PAPERTRAIL_PORT=papertrail_port,
+                       LOGZ_HOST=logz_host,
+                       LOGZ_TOKEN=logz_token):
             run("echo $GOPATH; nohup $GOBIN/go run CuantoQuedaBot.go >& bot.log < /dev/null &", pty=False )
             
 def stop():
