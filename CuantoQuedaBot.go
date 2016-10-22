@@ -173,21 +173,6 @@ func main() {
 	    botCuantoQueda(context)
     })
 
-    // 	//blank path hito
-    // bot.Handle("/hito", func(context telebot.Context) { // sería mejor modificar la expresión regular...
-    // 	    botCuantoQueda(context)
-    // })
-
-    //blank path
-    // bot.Handle("/cuanto_queda", func(context telebot.Context) {
-    // 		botCuantoQueda(context)
-    // })
-    //any search, all matchs in the end show options.
-    // bot.Handle("(([A-Za-z1234567890])+)", func(context telebot.Context) { // tampoco me gusta este error...
-    // 		log.Error("blank") // tampoco es un error per se... 
-    // 		botOptions(context)
-    // })
-
     bot.Messages = make(chan telebot.Message, 1000)
     bot.Queries = make(chan telebot.Query, 1000)
 
@@ -284,10 +269,10 @@ func queries() {
 
 // adds papertrail as hook, uses global log
 func papertrail_add( name string, papertrail_host string, papertrail_port string ) {
-	udp_port, _ := strconv.Atoi(papertrail_port)
+	port, _ := strconv.Atoi(papertrail_port)
 	hook, err := logrus_papertrail.NewPapertrailHook(&logrus_papertrail.Hook{
-		Host: papertrail_port,
-		Port: udp_port,
+		Host: papertrail_host,
+		Port: port,
 		Hostname: name,
 		Appname: "CuantoQuedaBot",
 	})
