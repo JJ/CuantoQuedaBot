@@ -4,7 +4,7 @@ from fabric.context_managers import shell_env, cd
 import os
 
 env.hosts = [ '159.100.248.62' ]
-env.user = "root"
+env.user = "bot"
 env.release_path= "CuantoQuedaBot"
 
 def uptime():
