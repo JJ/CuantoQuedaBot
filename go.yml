@@ -2,9 +2,5 @@
 - hosts: exoscale
   remote_user: root
   tasks:
-    - name: Instala APM
-      command: go get github.com/topfreegames/apm
-      environment:
-        GOBIN: /usr/bin
-        GOPATH: /home/root/lib/go
-        GOROOT: /usr/lib/go
+    - name: Instala supervisor
+      apt: name=supervisor state=present
