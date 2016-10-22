@@ -8,3 +8,7 @@
       apt: name=supervisor state=present
     - name: Crea usuario
       user: name=bot shell=/bin/bash groups=users,sudo append=yes password={{password}}
+    - name: Descarga aplicación
+      become: yes
+      become_user: bot
+      git: repo=http://github.com/JJ/CuantoQuedaBot dest=/home/bot/CuantoQuedaBot
