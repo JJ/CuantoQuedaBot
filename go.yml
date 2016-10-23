@@ -8,6 +8,12 @@
       apt: name=supervisor state=present
     - name: Configura supervisor
       copy: src=supervisord.conf dest=/etc/supervisord.conf 
+    - name: Configura supervisor
+      copy: src=gobot.conf dest=/etc/supervisor/conf.d/gobot.conf 
+    - name: Permisos de ejecución del sock
+      file: path=/var/run/supervisor.sock owner=root mode=0777
+    - name: Ejecuta supervisor
+      service: name=supervisor state=started
     - name: Crea usuario
       user: name=bot shell=/bin/bash groups=users,sudo append=yes password={{password}}
     - name: Descarga aplicación
