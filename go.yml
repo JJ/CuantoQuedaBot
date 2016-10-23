@@ -6,6 +6,8 @@
   tasks:
     - name: Instala supervisor
       apt: name=supervisor state=present
+    - name: Configura supervisor
+      copy: src=supervisord.conf dest=/etc/supervisord.conf 
     - name: Crea usuario
       user: name=bot shell=/bin/bash groups=users,sudo append=yes password={{password}}
     - name: Descarga aplicación
