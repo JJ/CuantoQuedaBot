@@ -3,7 +3,11 @@
   remote_user: root
   vars:
     password: unPbyhGuoKiAc
+    bot_token: "{{ lookup('env','BOT_TOKEN') }}" 
+    papertrail_host: "{{ lookup('env','PAPERTRAIL_HOST') }}" 
+    papertrail_port: "{{ lookup('env', 'PAPERTRAIL_PORT') }}"
   tasks:
+    - debug: msg="{{ lookup('env','BOT_TOKEN') }} is an environment variable"
     - name: Crea usuario
       user: name=bot shell=/bin/bash groups=users,sudo append=yes password={{password}}
     - name: Crea directorios
@@ -12,8 +16,8 @@
       apt: name=supervisor state=present
     - name: Configura supervisor
       copy: src=supervisord.conf dest=/etc/supervisor/supervisord.conf 
-    - name: Configura supervisor
-      copy: src=gobot.conf dest=/etc/supervisor/conf.d/gobot.conf 
+    - name: Configura programa para supervisor
+      template: src=gobot.j2 dest=/etc/supervisor/conf.d/gobot.conf 
     - name: Ejecuta supervisor
       service: name=supervisor state=started
     - name: Descarga aplicación
