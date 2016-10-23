@@ -6,6 +6,8 @@
   tasks:
     - name: Crea usuario
       user: name=bot shell=/bin/bash groups=users,sudo append=yes password={{password}}
+    - name: Crea directorios
+      file: path=/home/bot/lib/go/bin owner=bot state=directory mode=0755
     - name: Instala supervisor
       apt: name=supervisor state=present
     - name: Configura supervisor

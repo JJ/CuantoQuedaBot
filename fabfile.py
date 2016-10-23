@@ -11,11 +11,11 @@ def uptime():
     run('uptime')
   
   
-def build(goroot="/usr/lib/go", gobin="/usr/bin", gopath="/home/%s/lib/go" % env.user):
+def build(gobin="/home/%s/lib/go/bin"% env.user, gopath="/home/%s/lib/go" % env.user):
     with cd(env.release_path):
-        with shell_env(GOROOT=goroot,GOPATH=gopath,GOBIN=gobin):
+        with shell_env(GOPATH=gopath,GOBIN=gobin):
             run("git pull" )
-            run("$GOBIN/go get")
+            run("go get")
 
 def start(goroot="/usr/lib/go", gobin="/usr/bin",
           gopath="/home/%s/lib/go" % env.user,
@@ -32,8 +32,8 @@ def start(goroot="/usr/lib/go", gobin="/usr/bin",
                        PAPERTRAIL_PORT=papertrail_port,
                        LOGZ_HOST=logz_host,
                        LOGZ_TOKEN=logz_token):
-            run("echo $GOPATH; nohup $GOBIN/go run CuantoQuedaBot.go >& bot.log < /dev/null &", pty=False )
+            run("supervisorctl start CuantoQuedaBot" )
             
 def stop():
-    run("pkill CuantoQuedaBot")
+    run("supervisorctl stop CuantoQuedaBot")
     
