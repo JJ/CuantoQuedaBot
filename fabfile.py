@@ -37,3 +37,5 @@ def start(goroot="/usr/lib/go", gobin="/usr/bin",
 def stop():
     run("supervisorctl stop CuantoQuedaBot")
     
+def status():
+    run("supervisorctl status CuantoQuedaBot")
