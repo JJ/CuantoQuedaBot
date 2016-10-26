@@ -31,8 +31,20 @@ quieras.
 
 ## Desplegar el bot
 
-Puedes ejecutarlo localmente o usar fabric, que tendrás que instalar,
-para ejecutarlo remotamente. Sustituye
+Puedes ejecutarlo localmente o usar ansible + fabric, que tendrás que
+instalar.
+
+Empieza por usar Ansible para preparar el entorno. Define las
+variables de entorno que uses para el bot, los logs y el resto de los
+APIS, y ejecuta:
+
+	ansible-playbook -i hosts go.yml
+
+Esto instala los fuentes y algunas utilidades necesarias, aunque
+supone que Go y Python están instalados.
+
+A continuación tendrás que usar fabric para desplegar la última
+versión y ejecutarlo remotamente. Sustituye
 
 	env.hosts = [ '159.100.248.62' ]
 	env.user = "root"
@@ -40,7 +52,8 @@ para ejecutarlo remotamente. Sustituye
 
 (que corresponde a un servidor cedido gentilmente por
 [Exoscale](http://exoscale.ch) en `fabfile.py` por los valores para tu
-programa en particular y haz
+programa en particular. Establece los valores de las variables de
+entorno como el de arriba y otros para que vayan los logs y haz
 
 	fab build
 	fab start
