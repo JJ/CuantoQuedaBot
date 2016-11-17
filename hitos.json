@@ -13,5 +13,9 @@
 	{ "file": "3.PaaS",
 	  "title": "Uso de Plataformas como Servicio",
           "fecha": "10/11/2016"}
+	,
+	{ "file": "4.Docker",
+	  "title": "Etorno de pruebas con contenedores",
+          "fecha": "1/12/2016"}
     ]
 }
