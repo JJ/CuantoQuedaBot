@@ -2,7 +2,7 @@
 - hosts: exoscale
   remote_user: root
   vars:
-    password: unPbyhGuoKiAc
+    password: whatisthis
     bot_token: "{{ lookup('env','BOT_TOKEN') }}" 
     papertrail_host: "{{ lookup('env','PAPERTRAIL_HOST') }}" 
     papertrail_port: "{{ lookup('env', 'PAPERTRAIL_PORT') }}"
