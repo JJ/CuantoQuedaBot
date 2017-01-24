@@ -26,3 +26,8 @@ _testmain.go
 *~
 
 *.pyc
+
+log/
+*.lock
+config/deploy
+*.log
